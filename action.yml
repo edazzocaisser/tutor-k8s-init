@@ -96,12 +96,25 @@ runs:
         export PATH="/usr/local/bin/:$PATH"
         yq --version
 
+    - name: Checkout medality repo
+      id: checkout-repo
+      uses: actions/checkout@v3.0.2
+      with:
+        repository: Medality-Health/tutor
+        token: ${{ secrets.MRIO_GITHUB_TOKEN }}
+        path: ./tutor
+        ref: omit_patchesStrategicMerge_when_blank 
+
     # install Tutor which we'll use for configuring and deploying Open edX
     - name: Install Tutor
       shell: bash
       run: |-
         pip install --upgrade pyyaml
-        pip install tutor${{ inputs.tutor-version != 'latest' && format('=={0}', inputs.tutor-version) || '' }}
+        # pip install tutor${{ inputs.tutor-version != 'latest' && format('=={0}', inputs.tutor-version) || '' }}
+        cd $GITHUB_WORKSPACE/tutor
+        python3 setup.py bdist_wheel --universal
+        pip install dist/tutor-14.0.3-py2.py3-none-any.whl
+        cd - 
         tutor config save
         echo "TUTOR_VERSION=$(tutor --version | cut -f3 -d' ')" >> $GITHUB_ENV
         echo tutor root: $(tutor config printroot)
