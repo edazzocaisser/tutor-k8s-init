@@ -101,7 +101,6 @@ runs:
       uses: actions/checkout@v3.0.2
       with:
         repository: Medality-Health/tutor
-        token: ${{ secrets.MRIO_GITHUB_TOKEN }}
         path: ./tutor
         ref: omit_patchesStrategicMerge_when_blank 
 
